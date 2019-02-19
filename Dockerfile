@@ -1,7 +1,3 @@
-#
-# GitLab CI: Android v0.2
-#
-#
 
 FROM ubuntu:18.04
 MAINTAINER Deepak Kumar <deepak.hebbar@gmail.com>
@@ -20,6 +16,7 @@ RUN apt-get -qq update && \
       build-essential \
       openjdk-8-jdk \
       libc6-i386 \
+      html2text \
       lib32stdc++6 \
       ruby \
       ruby-dev \
@@ -31,9 +28,6 @@ RUN apt-get -qq update && \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
-
-RUN rm -f /etc/ssl/certs/java/cacerts; \
-    /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
 RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip > /sdk.zip && \
     unzip /sdk.zip -d /sdk && \
@@ -53,7 +47,5 @@ RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/pac
 
 RUN yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses
 
-COPY Gemfile.lock .
-COPY Gemfile .
-RUN gem install bundle
-RUN bundle install
+RUN gem install fastlane
+
