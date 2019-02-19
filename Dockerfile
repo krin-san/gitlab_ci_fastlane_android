@@ -21,8 +21,8 @@ RUN apt-get -qq update && \
       openjdk-8-jdk \
       libc6-i386 \
       lib32stdc++6 \
-      ruby2.4 \
-      ruby2.4-dev \
+      ruby \
+      ruby-dev \
       lib32gcc1 \
       lib32ncurses5 \
       lib32z1 \
