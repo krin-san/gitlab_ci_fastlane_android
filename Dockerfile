@@ -17,7 +17,7 @@ RUN apt-get -qq update && \
       bzip2 \
       curl \
       git-core \
-      html2text \
+      build-essential \
       openjdk-8-jdk \
       libc6-i386 \
       lib32stdc++6 \
