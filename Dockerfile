@@ -1,5 +1,5 @@
 
-FROM ubuntu:18.04
+FROM openjdk:8-jdk
 MAINTAINER Deepak Kumar <deepak.hebbar@gmail.com>
 
 ENV VERSION_SDK_TOOLS "4333796"
@@ -14,7 +14,6 @@ RUN apt-get -qq update && \
       curl \
       git-core \
       build-essential \
-      openjdk-8-jdk \
       libc6-i386 \
       html2text \
       lib32stdc++6 \
