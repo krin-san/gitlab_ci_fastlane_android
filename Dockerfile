@@ -24,11 +24,17 @@ RUN apt-get -qq update && \
       lib32z1 \
       unzip \
       locales \
-      cmake \
-      ndk-bundle \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+
+ENV ANDROID_NDK_COMPONENTS "ndk-bundle" \
+                       "cmake;3.10.2.4988404"
+                       
+RUN (while sleep 3; do echo "y"; done) | ${ANDROID_SDK_MANAGER} ${ANDROID_NDK_COMPONENTS}  
+
+ENV ANDROID_NDK_HOME ${ANDROID_SDK}/ndk-bundle
+ENV PATH ${ANDROID_NDK_HOME}:$PATH
 
 RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip > /sdk.zip && \
     unzip /sdk.zip -d /sdk && \
