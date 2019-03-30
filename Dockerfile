@@ -28,21 +28,57 @@ RUN apt-get -qq update && \
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
-# ------------------------------------------------------
-# --- Android NDK
+# # ------------------------------------------------------
+# # --- Android NDK
 
-# download
-RUN mkdir /opt/android-ndk-tmp
-RUN cd /opt/android-ndk-tmp && wget -q http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin
-# uncompress
-RUN cd /opt/android-ndk-tmp && chmod a+x ./android-ndk-r10e-linux-x86_64.bin
-RUN cd /opt/android-ndk-tmp && ./android-ndk-r10e-linux-x86_64.bin
-# move to it's final location
-RUN cd /opt/android-ndk-tmp && mv ./android-ndk-r10e /opt/android-ndk
-# remove temp dir
-RUN rm -rf /opt/android-ndk-tmp
-# add to PATH
-ENV PATH ${PATH}:${ANDROID_NDK_HOME}
+# # download
+# RUN mkdir /opt/android-ndk-tmp
+# RUN cd /opt/android-ndk-tmp && wget -q http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin
+# # uncompress
+# RUN cd /opt/android-ndk-tmp && chmod a+x ./android-ndk-r10e-linux-x86_64.bin
+# RUN cd /opt/android-ndk-tmp && ./android-ndk-r10e-linux-x86_64.bin
+# # move to it's final location
+# RUN cd /opt/android-ndk-tmp && mv ./android-ndk-r10e /opt/android-ndk
+# # remove temp dir
+# RUN rm -rf /opt/android-ndk-tmp
+# # add to PATH
+# ENV PATH ${PATH}:${ANDROID_NDK_HOME}
+
+# NDK
+
+ENV NDK_ROOT $ANDROID_SDK_ROOT/ndk-bundle
+
+RUN yes | sdkmanager \
+        "cmake;3.6.4111459" \
+        "cmake;3.10.2.4988404" \
+        "ndk-bundle" >/dev/null \
+    && rm -rf  \
+        # Delete simpleperf tool
+        $NDK_ROOT/simpleperf \
+        # Delete STL version we don't care about
+        $NDK_ROOT/sources/cxx-stl/stlport \
+        $NDK_ROOT/sources/cxx-stl/gnu-libstdc++ \
+        # Delete unused prebuild images
+        $NDK_ROOT/prebuilt/android-mips* \
+        # Delete obsolete Android platforms
+        $NDK_ROOT/platforms/android-9 \
+        $NDK_ROOT/platforms/android-12 \
+        $NDK_ROOT/platforms/android-13 \
+        $NDK_ROOT/platforms/android-15 \
+        $NDK_ROOT/platforms/android-16 \
+        # Delete unused platform sources
+        $NDK_ROOT/sources/cxx-stl/gnu-libstdc++/4.9/libs/mips* \
+        $NDK_ROOT/sources/cxx-stl/llvm-libc++/libs/mips* \
+        # Delete LLVM STL tests
+        $NDK_ROOT/sources/cxx-stl/llvm-libc++/test \
+        # Delete unused toolchains
+        $NDK_ROOT/toolchains/mips \
+        $NDK_ROOT/build/core/toolchains/mips* \
+    && sdkmanager --list | sed -e '/Available Packages/q'
+
+
+# NDK
+
 
 RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip > /sdk.zip && \
     unzip /sdk.zip -d /sdk && \
