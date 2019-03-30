@@ -68,6 +68,9 @@ RUN yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses
 # NDK
 
 # Android NDK
+ENV SDK_HOME /opt
+
+WORKDIR $SDK_HOME
 ENV ANDROID_NDK_VERSION r13b
 ENV ANDROID_NDK_URL http://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
 RUN curl -L "${ANDROID_NDK_URL}" -o android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip  \
