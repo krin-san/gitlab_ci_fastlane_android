@@ -28,25 +28,6 @@ RUN apt-get -qq update && \
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
-# # ------------------------------------------------------
-# # --- Android NDK
-
-# # download
-# RUN mkdir /opt/android-ndk-tmp
-# RUN cd /opt/android-ndk-tmp && wget -q http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin
-# # uncompress
-# RUN cd /opt/android-ndk-tmp && chmod a+x ./android-ndk-r10e-linux-x86_64.bin
-# RUN cd /opt/android-ndk-tmp && ./android-ndk-r10e-linux-x86_64.bin
-# # move to it's final location
-# RUN cd /opt/android-ndk-tmp && mv ./android-ndk-r10e /opt/android-ndk
-# # remove temp dir
-# RUN rm -rf /opt/android-ndk-tmp
-# # add to PATH
-# ENV PATH ${PATH}:${ANDROID_NDK_HOME}
-
-
-
-
 RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip > /sdk.zip && \
     unzip /sdk.zip -d /sdk && \
     rm -v /sdk.zip
@@ -64,24 +45,6 @@ RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/pac
     ${ANDROID_HOME}/tools/bin/sdkmanager ${PACKAGES}
 
 RUN yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses
-
-# NDK
-
-# Android NDK
-ENV SDK_HOME /opt
-
-WORKDIR $SDK_HOME
-ENV ANDROID_NDK_VERSION r13b
-ENV ANDROID_NDK_URL http://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
-RUN curl -L "${ANDROID_NDK_URL}" -o android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip  \
-  && unzip android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip -d ${SDK_HOME}  \
-  && rm -rf android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip
-ENV ANDROID_NDK_HOME ${SDK_HOME}/android-ndk-${ANDROID_NDK_VERSION}
-ENV PATH ${ANDROID_NDK_HOME}:$PATH
-RUN chmod u+x ${ANDROID_NDK_HOME}/ -R
-
-
-# NDK
 
 RUN gem install bundle
 RUN gem install fastlane
