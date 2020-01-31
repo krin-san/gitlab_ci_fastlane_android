@@ -1,6 +1,5 @@
-
-FROM openjdk:8-jdk
-MAINTAINER Deepak Kumar <deepak.hebbar@gmail.com>
+FROM openjdk:8-jdk-slim-buster
+LABEL Deepak Kumar <deepak.hebbar@gmail.com>
 
 ENV VERSION_SDK_TOOLS "4333796"
 
@@ -20,13 +19,17 @@ RUN apt-get -qq update && \
       ruby \
       ruby-dev \
       lib32gcc1 \
-      lib32ncurses5 \
+      lib32ncurses6 \
       lib32z1 \
       unzip \
       locales \
+      sudo \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN locale-gen en_US.UTF-8
-ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+RUN locale-gen && update-locale LANG=en_US.UTF-8
+
+RUN gem install bundle fastlane
+RUN curl -sL firebase.tools | analytics=false bash
 
 RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip > /sdk.zip && \
     unzip /sdk.zip -d /sdk && \
@@ -45,7 +48,3 @@ RUN while read -r package; do PACKAGES="${PACKAGES}${package} "; done < /sdk/pac
     ${ANDROID_HOME}/tools/bin/sdkmanager ${PACKAGES}
 
 RUN yes | ${ANDROID_HOME}/tools/bin/sdkmanager --licenses
-
-RUN gem install bundle
-RUN gem install fastlane
-
