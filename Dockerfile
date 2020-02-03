@@ -28,8 +28,11 @@ RUN apt-get -qq update && \
 RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
 RUN locale-gen && update-locale LANG=en_US.UTF-8
 
-RUN gem install bundle fastlane
+# Install Firebase CLI Tools
+
 RUN curl -sL firebase.tools | analytics=false bash
+
+# Install Android SDK
 
 RUN curl -s https://dl.google.com/android/repository/sdk-tools-linux-${VERSION_SDK_TOOLS}.zip > /sdk.zip && \
     unzip /sdk.zip -d /sdk && \
